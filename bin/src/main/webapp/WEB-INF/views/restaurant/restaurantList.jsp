@@ -9,7 +9,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>${ res.resName }</title>
+<title>Insert title here</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> <!-- 온라인 방식 -->
 	<script src="${pageContext.request.contextPath}/resources/assets/js/jquery.min.js"></script>
@@ -17,11 +17,8 @@
 	<script src="${pageContext.request.contextPath}/resources/assets/js/breakpoints.min.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/assets/js/util.js"></script>
 	<script src="${pageContext.request.contextPath}/resources/assets/js/main.js"></script>
-	<script src="${pageContext.request.contextPath}/resources/assets/js/vendor.js"></script>
-	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey="비밀입니다 죄송합니다."&libraries=services"></script>
-	<noscript><link rel="stylesheet" href="${pageContext.request.contextPath}/resources/assets/css/noscript.css" /></noscript>
-	<link rel="stylesheet" href="${pageContext.request.contextPath}/resources/assets/css/app.css" />
-	<link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+	<script src="${pageContext.request.contextPath}/resources/assets/js/vendor.js"></script>	
+	<script type="text/javascript" src="//dapi.kakao.com/v2/maps/sdk.js?appkey=a13847f8f0767319e05e937b6c2b2bf5&libraries=services"></script>
 	<style>
 		/* 이미지 모달  */
 		.imgModal {
@@ -44,12 +41,11 @@
 	         -o-transform: translate(-50%, -50%);
 	         transform: translate(-50%, -50%);
 	      }
-	     .imgModalBox>img {
-            margin-left: 4%;
-            max-width: 100%;
-            height: 700px;
-            border-radius: 2%;
-       }
+	      .imgModalBox>img {
+	         margin-left: 12%;
+	         width: 80%;
+	         height: 80%;
+	      }
 		table a>img:hover {
 			cursor: zoom-in;
 		}
@@ -65,114 +61,95 @@
 
 		<%@ include file="../common/menubar.jsp" %>
 		<%@ include file="../common/modal.jsp" %>
-		
-		<script>
-			// script 태그 내에서도 스크립틀릿과 같은 jsp 요소를 쓸 수 있다.
-			
-				var msg = "<%= alertMsg %>"; 
-				
-				if(msg != "null") { // 즉, 성공 / 경고 메시지 문구가 담겨있을 경우
-					alert(msg);
-				
-					// session 에 들어있는 alertMsg 키값에 대한 밸류를 지워줘야함!!
-					// 안그러면 menubar.jsp 가 로딩될때마다 매번 alert 가 뜰것
-					// => XX.removeAttribute("키값");
-					<% session.removeAttribute("alertMsg"); %>
-				}
-			
-		</script>
 
 		<!-- Main -->
 			<div id="main">
 				<div class="inner">
 					
-						<div class="w3-content" style="width: 38%; float: left; margin-right: 3%; margin-top: 2%;" data-aos="fade-up">
+						<div class="w3-content" style="width: 38%; float: left; margin-left:4%;margin-right: 3%; margin-top: 2%;">
 							<c:forEach var="i" items="${ list3 }">
-								<c:if test="${ res.resNo == i.resNo && i.reviewNo == 0}">
-									<img class="mySlide" src="${pageContext.request.contextPath}/resources/images/${ i.changeName }" style="max-width:100%; height:450px;margin:auto;">
+								<c:if test="${ res.resNo == i.resNo }">
+									<img class="mySlide" src="${pageContext.request.contextPath}/resources/images/${ i.changeName }" style="width:100%">
 								</c:if>
 							</c:forEach>
 								
-								<a style=" border-bottom: none; margin-left: 0%;" onclick="plusDivs(-1)"> ❮</a>
-								<a style="border-bottom: none; margin-left: 94%; " onclick="plusDivs(1)">❯ </a>
+								<a style=" border-bottom: none; margin-left: 0%;" onclick="plusDivs2(-1)"> ❮</a>
+								<a style="border-bottom: none; margin-left: 94%; " onclick="plusDivs2(1)">❯ </a>
 								
 								</div>
 							</div>
 					
 				</div>
-				<div id="map" style="width:40%; height:450px; margin-right: 10%; float: right; margin-top:-5%" data-aos="fade-up"></div>
+				<div id="map" style="width:40%; height:450px; margin-right: 10%; float: right; margin-top:-5%"></div>
 				
-				<div style="margin-top: 2%;   float: left; width: 75%; height: 20%; margin-left: 15%;" data-aos="fade-up">
-					<h2> ${ res.resName }
+				<div style="margin-top: 2%;   float: left; width: 75%; height: 20%; margin-left: 15%;" >
+					<h2> ${ res.resName } 
 					<% if(loginUser != null) { %>
 					<c:set var="memberNo" value="<%=loginUser.getMemberNo() %>"/>
 					<c:set var="loop_flag" value="false" />
-					<c:set var= "boo" value="0"/>
-					
-					<!-- booklist == 즐겨찾기된 목록 -->
-					<c:forEach var="b" items="${ boolist }" >
-						<c:if test="${ b.resNo eq res.resNo and memberNo eq b.memberNo }">
-							<c:set var= "boo" value="1"/>
-						</c:if>
-					</c:forEach>
-					
-						
-                		<c:if test="${ boo==1 }">
-             
+				
+					<c:forEach var="b" items="${ boolist }">
+					<c:choose>
+					 
+                		<c:when test="${ b.resNo == res.resNo && memberNo == b.memberNo }">
+                		<c:if test="${not loop_flag }">
 			                <span>
 							 <a idx="${ res.resNo }" href="javascript:" class="heart-click heart_icon${ res.resNo }" style="border-bottom:none !important;">
-							 <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-suit-heart-fill" viewBox="0 0 16 16">
-			                 <path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z" />
-			                 </svg>
+								 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart-fill" viewBox="0 0 16 16">
+				                 	<path d="M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z" />
+				                 </svg>
 			                 </a>
 			                </span>
-                				
-               		 	</c:if>
-		                
-				        <c:if test="${ boo==0 }">      
-					                <span>
-					               		<a idx="${ res.resNo }" href="javascript:" class="heart-click heart_icon${ res.resNo }" style="border-bottom:none !important;">
-					                    <svg  xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16">
-				                        <path d="M8 6.236l-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z" />
-				                        </svg></a></span>
-				         </c:if>             
-		                 
-			
-				
-           		
-					<c:if test="${ res.resStatus == 3}">
-					<button type="button" onclick="location.href='${pageContext.request.contextPath}/make/${res.resNo}'"style=" float:right; transform: translateY(-10%); font-size:small; margin-left:1%;" data-aos="fade-up">예약하기</button>
-					</c:if>
-					<% } %>
-					</h2>
+			                 <c:set var="loop_flag" value="true" />
+			                 </c:if>
+               		 	</c:when>
+               		 	
+                <c:otherwise>
+                <c:if test="${not loop_flag }">
+	                <span>
+	               		<a idx="${ res.resNo }" href="javascript:" class="heart-click heart_icon${ res.resNo }" style="border-bottom:none !important;">
+		                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16">
+		                          <path d="M8 6.236l-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z" />
+		                     </svg>
+	                     </a>
+	                </span>
+	                        <c:set var="loop_flag" value="true" />
+                        </c:if>
+				</c:otherwise>
+				</c:choose>
+				</c:forEach>
+             
+           		<% } %>
+					
+					<button type="button" onclick="location.href='${pageContext.request.contextPath}/make/${res.resNo}'"style=" float:right; transform: translateY(-10%); width:9%; height:5%; font-size:small; margin-left:1%;">예약하기</button></h2>
 					<hr>
 					<p> ${ res.resContent } </p>
 					<br>
-				</div>
+				</div>	
 				
-				<div style=" margin-top: 3%; width: 75%; height: 30%;  height:40%; float: left; margin-left: 15%;overflow: hidden;">
+				<div style=" margin-top: 3%; width: 75%; height: 30%;  height:40%; float: left; margin-left: 15%;">
 					<form action="reviewList" method="post" enctype="multipart/form-data">
-						<table style="border: none; background: white; overflow: hidden;">
+						<table style="border: none; background: white;">
 							<thead>
 								<tr>
-									<th colspan="2" data-aos="fade-up">
+									<th colspan="2">
 										<c:choose>
 											<c:when test="${ empty reviewList }">
-												<a href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=0" style="border-bottom: none;">전체(0)</a> |
-												<a type="button" href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=1" style="box-shadow:none; border-bottom: none;">맛있어요(0)</a> |
-												<a type="button" href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=2" style="box-shadow:none; border-bottom: none;">괜찮아요(0)</a> |
-												<a type="button" href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=3" style="box-shadow:none; border-bottom: none;">별로예요(0)</a>
+												<a href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=0">전체(0)</a> |
+												<a type="button" href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=1" style="box-shadow:none;">맛있어요(0)</a> |
+												<a type="button" href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=2" style="box-shadow:none;">괜찮아요(0)</a> |
+												<a type="button" href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=3" style="box-shadow:none;">별로예요(0)</a>
 											</c:when>
 											<c:otherwise>
-												<a href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=0" style="border-bottom: none;">전체(${ s0 })</a> |
-												<a type="button" href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=1" style="box-shadow:none; border-bottom: none;">맛있어요(${ s1 })</a> |
-												<a type="button" href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=2" style="box-shadow:none; border-bottom: none;">괜찮아요(${ s2 })</a> |
-												<a type="button" href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=3" style="box-shadow:none; border-bottom: none;">별로예요(${ s3 })</a>
+												<a href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=0">전체(${ s0 })</a> |
+												<a type="button" href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=1" style="box-shadow:none;">맛있어요(${ s1 })</a> |
+												<a type="button" href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=2" style="box-shadow:none;">괜찮아요(${ s2 })</a>
+												<a type="button" href="${pageContext.request.contextPath}/restaurantList/${resNo}?currentPage=1&sort=3" style="box-shadow:none;">별로예요(${ s3 })</a>
 											</c:otherwise>
 										</c:choose>
 									</th>
 									<!-- 로그인 한 사용자에게만 보이게 -->
-									<th style="text-align: right;" data-aos="fade-up">
+									<th style="text-align: right;">
 										<% if(loginUser != null) { %>
 											<button type="button" id="<%= loginUser.getMemberNo() %>" onclick="writeValue(this.id)" style="font-size:small;" data-bs-toggle="modal" data-bs-target="#add-new-write-modal">리뷰쓰기</button>
 										<% } %>
@@ -190,7 +167,7 @@
 									</c:when>
 									<c:otherwise>
 										<c:forEach var="review" items="${ reviewList }">
-											<tr data-aos="fade-up">
+											<tr>
 												<td rowspan="2" style="width: 15%; text-align: center;">${ review.memberNickname }</td>
 												<td style="width: 65%;">
 													<fmt:formatDate value="${ review.uploadDate }" pattern="yyyy-MM-dd" /><br>
@@ -223,7 +200,7 @@
 													</c:choose>
 												</td>
 											</tr>
-											<tr data-aos="fade-up">
+											<tr>
 												<td>
 													<!-- 리뷰 이미지 -->
 													<c:forEach var="att" items="${ attReview }">
@@ -234,7 +211,7 @@
 														</c:if>
 													</c:forEach>
 												</td>
-												<td align="center" data-aos="fade-up">
+												<td align="center">
 													<% if(loginUser != null) { %>
 														<c:set var="loginNick" value="<%= loginUser.getMemberNickname() %>" />
 														<c:choose>
@@ -270,7 +247,7 @@
 							</tbody>
 							<tfoot>
 								<!-- 페이징 처리 -->
-								<tr align="center"data-aos="fade-up">
+								<tr align="center">
 									<td colspan="5" >
 										<div>          
 									        <c:if test="${currentPage != 1}">
@@ -497,22 +474,41 @@
 	  
 <!-- Scripts -->
 <script>
-			var slideIndex = 1;
-			showDivs(slideIndex);
+	var slideIndex = 1;
+	showDivs(slideIndex);
+	
+	function plusDivs(n) {
+	  showDivs(slideIndex += n);
+	}
+	
+	function showDivs(n) {
+	  var i;
+	  var x = document.getElementsByClassName("mySlides");
+	  if (n > x.length) {slideIndex = 1}    
+	  if (n < 1) {slideIndex = x.length} ;
+	  for (i = 0; i < x.length; i++) {
+		 x[i].style.display = "none";  
+	  }
+	  x[slideIndex-1].style.display = "block";  
+	}
+</script>
+<script>
+			var slideIndex2 = 1;
+			showDivs2(slideIndex2);
 			
-			function plusDivs(n) {
-			  showDivs(slideIndex += n);
+			function plusDivs2(n2) {
+			  showDivs2(slideIndex2 += n2);
 			}
 			
-			function showDivs(n) {
-			  var i;
-			  var x = document.getElementsByClassName("mySlide");
-			  if (n > x.length) {slideIndex = 1}    
-			  if (n < 1) {slideIndex = x.length} ;
-			  for (i = 0; i < x.length; i++) {
-				 x[i].style.display = "none";  
+			function showDivs2(n2) {
+			  var i2;
+			  var x2 = document.getElementsByClassName("mySlide");
+			  if (n2 > x2.length) {slideIndex2 = 1}    
+			  if (n2 < 1) {slideIndex2 = x2.length} ;
+			  for (i2 = 0; i2 < x2.length; i2++) {
+				 x2[i2].style.display = "none";  
 			  }
-			  x[slideIndex-1].style.display = "block";  
+			  x2[slideIndex2-1].style.display = "block";  
 			}
 </script>
 
@@ -621,7 +617,7 @@
 	        console.log("꽉찬하트로 바껴라!");
 
 	        // 꽉찬하트로 바꾸기
-	        $(this).html("<svg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='currentColor' class='bi bi-suit-heart-fill' viewBox='0 0 16 16'><path d='M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z'/></svg>");
+	        $(this).html("<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='currentColor' class='bi bi-suit-heart-fill' viewBox='0 0 16 16'><path d='M4 1c2.21 0 4 1.755 4 3.92C8 2.755 9.79 1 12 1s4 1.755 4 3.92c0 3.263-3.234 4.414-7.608 9.608a.513.513 0 0 1-.784 0C3.234 9.334 0 8.183 0 4.92 0 2.755 1.79 1 4 1z'/></svg>");
 	
 	    // 꽉찬 하트를 눌렀을 때
 	    }else if($(this).children('svg').attr('class') == "bi bi-suit-heart-fill"){
@@ -647,7 +643,7 @@
 	        console.log("빈하트로 바껴라!");
 
 	        // 빈하트로 바꾸기
-	        $(this).html('<svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16"><path d="M8 6.236l-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z" /></svg>');
+	        $(this).html('<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-suit-heart" viewBox="0 0 16 16"><path d="M8 6.236l-.894-1.789c-.222-.443-.607-1.08-1.152-1.595C5.418 2.345 4.776 2 4 2 2.324 2 1 3.326 1 4.92c0 1.211.554 2.066 1.868 3.37.337.334.721.695 1.146 1.093C5.122 10.423 6.5 11.717 8 13.447c1.5-1.73 2.878-3.024 3.986-4.064.425-.398.81-.76 1.146-1.093C14.446 6.986 15 6.131 15 4.92 15 3.326 13.676 2 12 2c-.777 0-1.418.345-1.954.852-.545.515-.93 1.152-1.152 1.595L8 6.236zm.392 8.292a.513.513 0 0 1-.784 0c-1.601-1.902-3.05-3.262-4.243-4.381C1.3 8.208 0 6.989 0 4.92 0 2.755 1.79 1 4 1c1.6 0 2.719 1.05 3.404 2.008.26.365.458.716.596.992a7.55 7.55 0 0 1 .596-.992C9.281 2.049 10.4 1 12 1c2.21 0 4 1.755 4 3.92 0 2.069-1.3 3.288-3.365 5.227-1.193 1.12-2.642 2.48-4.243 4.38z" /></svg>');
 
 	        
 	    }
@@ -661,10 +657,7 @@
 	
 	
 	</script>
-	 <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-			 	<script>
-            AOS.init();
-        </script>
+	
 
 </body>
 </html>
